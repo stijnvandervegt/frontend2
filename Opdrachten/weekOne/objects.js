@@ -1,7 +1,7 @@
 function Person(name) {
-	this.name = name;
+    this.name = name;
 	this.speak = function(string) {
-		var returnString = this.name +' zegt: '+ string;
+	    var returnString = this.name +' zegt: '+ string;
 		return returnString;
 	}
 }
