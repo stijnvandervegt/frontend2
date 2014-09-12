@@ -17,18 +17,7 @@ var APP = APP || {};
 
 	};
 
-    APP.event = {
-        _listeners: {},
-        addListener:function(a,c){
-
-        },
-        fire:function(a){
-
-        },
-        removeListener:function(a,c) {
-
-        }
-    }
+   
 
     APP.geo = {
         GPS_AVAILABLE: 'GPS_AVAILABLE',
