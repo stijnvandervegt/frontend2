@@ -8,10 +8,12 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'app/components/handlebars/handlebars.js',
-                    'app/components/director/lib/director.js',
-                    'app/js/templates/templates.js',
-                    'app/js/**/*.js',
-                    'app/js/*.js'
+                    'app/components/director/build/director.js',
+                    'app/js/managers/*.js',
+                    'app/js/routers/*.js',
+                    'app/js/views/*.js',
+                    'app/js/helpers/*.js',
+                    'app/js/main.js'
                 ],
                 dest: 'static/js/all.js'
             }

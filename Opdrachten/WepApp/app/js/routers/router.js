@@ -1,18 +1,17 @@
 var router = function() {
 
-    // Set Router from direction router library.
-    var router = {
-        controller: Router({
-            '/about': this.showAbout,
-            '/movies': this.showMovies
-        }),
-        showAbout: function() {
-            console.log('about');
-        },
-        showMovies: function() {
-            console.log('movie');
-        }
+    var showAbout = function() {
+        console.log('about');
     };
+    var showMovies = function() {
+        console.log('movie');
+    };
+
+    // Set Router from direction router library.
+    var router =  Router({
+        '/about': showAbout,
+        '/movies': showMovies
+    });
 
     return router;
 

@@ -4,7 +4,7 @@ var movieApp = movieApp || {};
         init: function() {
 
             // set router
-            router.controller.init();
+            router.init();
 
         }
     };

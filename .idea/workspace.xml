@@ -2,20 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="edbe3f55-3532-4a51-9602-64a466fc30da" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/.bowerrc" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/templates/about.hbs" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/aboutView.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/bower.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/static/index.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/templates/movie.hbs" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/movie.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/package.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js" />
-      <change type="DELETED" beforePath="C:\projecten\frontend\Opdrachten\WepApp\index.html" afterPath="" />
-      <change type="DELETED" beforePath="C:\projecten\frontend\Opdrachten\WepApp\static\css\main.css" afterPath="" />
-      <change type="MOVED" beforePath="C:\projecten\frontend\Opdrachten\WepApp\static\js\main.js" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Opdrachten/WepApp/static/index.html" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/static/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js" afterPath="$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="frontend.iws" />
@@ -42,7 +33,7 @@
       <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="5" selection-start="222" selection-end="222" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+            <state line="5" column="25" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
               <folding />
             </state>
           </provider>
@@ -51,7 +42,7 @@
       <file leaf-file-name="Gruntfile.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="17" selection-start="857" selection-end="857" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="833">
+            <state line="15" column="32" selection-start="565" selection-end="569" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="867">
               <folding />
             </state>
           </provider>
@@ -60,8 +51,24 @@
       <file leaf-file-name="all.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/js/all.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="3" selection-start="3" selection-end="3" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="53720">
-              <folding />
+            <state line="3809" column="0" selection-start="120965" selection-end="120965" vertical-scroll-proportion="-20.384615" vertical-offset="64223" max-vertical-offset="65960">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+                <marker date="1411078080816" expanded="true" signature="120487:120797" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="120515:120682" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="120520:120682" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="120831:120966" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="120928:120962" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="120967:121290" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121047:121210" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121115:121143" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121206:121221" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121496:121505" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121723:121844" placeholder="{...}" />
+                <marker date="1411078080816" expanded="true" signature="121728:121824" placeholder="{&quot;template&quot;: ''...}" />
+                <marker date="1411078080816" expanded="true" signature="121958:122053" placeholder="{&quot;template&quot;: ''...}" />
+                <marker date="1411078080816" expanded="true" signature="121968:121979" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -87,16 +94,7 @@
       <file leaf-file-name="aboutView.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/aboutView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="21" selection-start="67" selection-end="67" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="templates.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/templates/templates.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+            <state line="8" column="9" selection-start="253" selection-end="253" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
               <folding />
             </state>
           </provider>
@@ -111,19 +109,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="router.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="router.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="10" selection-start="289" selection-end="289" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+            <state line="6" column="29" selection-start="160" selection-end="160" vertical-scroll-proportion="0.16721311" vertical-offset="0" max-vertical-offset="610">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="movie.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="0" selection-start="5705" selection-end="5705" vertical-scroll-proportion="-17.384615" vertical-offset="670" max-vertical-offset="1700">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="movie.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="20" selection-start="68" selection-end="80" vertical-scroll-proportion="0.16721311" vertical-offset="0" max-vertical-offset="610">
+            <state line="12" column="30" selection-start="172" selection-end="172" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
               <folding />
             </state>
           </provider>
@@ -160,15 +167,15 @@
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/index.html" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/.bowerrc" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/bower.json" />
-        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js" />
-        <option value="$PROJECT_DIR$/Opdrachten/WepApp/static/index.html" />
-        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/templates/about.hbs" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/templates/movie.hbs" />
-        <option value="$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/movie.js" />
-        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js" />
         <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/aboutView.js" />
+        <option value="$PROJECT_DIR$/Opdrachten/WepApp/static/index.html" />
+        <option value="$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js" />
+        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js" />
+        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js" />
+        <option value="$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js" />
       </list>
     </option>
   </component>
@@ -403,66 +410,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frontend" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frontend" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Opdrachten" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="WepApp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="templates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frontend" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frontend" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Opdrachten" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="WepApp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="routers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -580,20 +527,20 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32982087" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -862,30 +809,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="33" selection-start="6291" selection-end="6296" vertical-scroll-proportion="-55.96154" vertical-offset="7" max-vertical-offset="1700">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/js/all.min.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="0" selection-start="32171" selection-end="32171" vertical-scroll-proportion="0.056951422" vertical-offset="0" max-vertical-offset="597">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/js/all.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="3" selection-start="3" selection-end="3" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="53720">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="17" selection-start="857" selection-end="857" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="833">
           <folding />
         </state>
       </provider>
@@ -904,13 +830,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="5" selection-start="222" selection-end="222" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/movie.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="175" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
@@ -918,30 +837,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/aboutView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="21" selection-start="67" selection-end="67" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/templates/templates.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="610">
+        <state line="18" column="5" selection-start="596" selection-end="596" vertical-scroll-proportion="0.50163937" vertical-offset="0" max-vertical-offset="610">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js">
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/views/aboutView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="10" selection-start="289" selection-end="289" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="408">
+        <state line="8" column="9" selection-start="253" selection-end="253" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/js/all.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3809" column="0" selection-start="120965" selection-end="120965" vertical-scroll-proportion="-20.384615" vertical-offset="64223" max-vertical-offset="65960">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <marker date="1411078080816" expanded="true" signature="120487:120797" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="120515:120682" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="120520:120682" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="120831:120966" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="120928:120962" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="120967:121290" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121047:121210" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121115:121143" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121206:121221" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121496:121505" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121723:121844" placeholder="{...}" />
+            <marker date="1411078080816" expanded="true" signature="121728:121824" placeholder="{&quot;template&quot;: ''...}" />
+            <marker date="1411078080816" expanded="true" signature="121958:122053" placeholder="{&quot;template&quot;: ''...}" />
+            <marker date="1411078080816" expanded="true" signature="121968:121979" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="32" selection-start="565" selection-end="569" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="867">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="25" selection-start="126" selection-end="126" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/managers/movie.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="20" selection-start="68" selection-end="80" vertical-scroll-proportion="0.16721311" vertical-offset="0" max-vertical-offset="610">
+        <state line="12" column="30" selection-start="172" selection-end="172" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/static/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="0" selection-start="5705" selection-end="5705" vertical-scroll-proportion="-17.384615" vertical-offset="670" max-vertical-offset="1700">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Opdrachten/WepApp/app/js/routers/router.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="29" selection-start="160" selection-end="160" vertical-scroll-proportion="0.16721311" vertical-offset="0" max-vertical-offset="610">
           <folding />
         </state>
       </provider>

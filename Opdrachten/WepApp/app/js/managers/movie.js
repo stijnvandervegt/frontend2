@@ -10,7 +10,7 @@ var movieManager = (function() {
 
     return {
         movies: data,
-        getMovie: getDataById
+        getMovie: getMovieById
     }
 
 })();
