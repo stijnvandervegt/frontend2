@@ -2,6 +2,7 @@ var router = function() {
 
     var showAbout = function() {
         console.log('about');
+        aboutView.init();
     };
     var showMovies = function() {
         console.log('movie');

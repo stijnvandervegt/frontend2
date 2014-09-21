@@ -1,16 +1,13 @@
-var movieManager = (function() {
+var dataManager = (function() {
 
     var data = {
+        url: '../data/data.json',
+        init: function() {
 
+        },
+        getDataByName: function(name) {
+
+        }
     };
-
-    var getMovieById = function(id) {
-
-    };
-
-    return {
-        movies: data,
-        getMovie: getMovieById
-    }
 
 })();

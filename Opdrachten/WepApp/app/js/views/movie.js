@@ -1,6 +1,6 @@
 var movieView = function() {
     var view = {
-        template: '',
+        template: 'movie',
         init: function() {
 
         },
