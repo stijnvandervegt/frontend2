@@ -20,7 +20,7 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    'app/components/handlebars/handlebars.runtime.js',
+                    'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
                     'app/components/director/build/director.js',
                     'app/js/templates/*.js',
                     'app/js/managers/*.js',
