@@ -1,4 +1,4 @@
-var router = function() {
+var router = function(movieApp) {
 
     var showAbout = function() {
         console.log('about');
@@ -6,14 +6,15 @@ var router = function() {
     };
     var showMovies = function() {
         console.log('movie');
+        movieView.init();
     };
 
     // Set Router from direction router library.
-    var router =  Router({
+    movieApp.router =  Router({
         '/about': showAbout,
         '/movies': showMovies
     });
 
-    return router;
+    return movieApp;
 
-}();
+}(movieApp || {});

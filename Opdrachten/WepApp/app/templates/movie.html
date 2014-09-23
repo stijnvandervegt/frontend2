@@ -1,0 +1,15 @@
+<section class="movie">
+     <h1>{{ title }}</h1>
+      {{#each movies}}
+      <article>
+         <header>
+             <h1>{{ title }}</h1>
+             <em>Release date: <time>{{ date }}</time></em>
+         </header>
+           <figure>
+             <img src="{{ image }}" alt="{{ title }}">
+         </figure>
+         <p>{{ description }}</p>
+      </article>
+      {{/each}}
+</section>

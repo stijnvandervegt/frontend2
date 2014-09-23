@@ -22,11 +22,11 @@ module.exports = function(grunt) {
                 src: [
                     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
                     'app/components/director/build/director.js',
+                    'app/js/helpers/*.js',
                     'app/js/templates/*.js',
                     'app/js/managers/*.js',
                     'app/js/routers/*.js',
                     'app/js/views/*.js',
-                    'app/js/helpers/*.js',
                     'app/js/main.js'
                 ],
                 dest: 'static/js/all.js'
@@ -46,12 +46,12 @@ module.exports = function(grunt) {
             options: {
                 namespace: 'movieApp.Templates',
                 processName: function(filePath) {
-                    return filePath.replace(/^templates\//, '').replace(/\.hbs$/, '');
+                    return filePath.replace(/^templates\//, '').replace(/\.html$/, '');
                 }
             },
             all: {
                 files: {
-                    "app/js/templates/templates.js": ["app/templates/*.hbs"]
+                    "app/js/templates/templates.js": ["app/templates/*.html"]
                 }
             }
         }

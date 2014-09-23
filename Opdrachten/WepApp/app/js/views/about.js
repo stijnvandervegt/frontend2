@@ -1,26 +1,21 @@
 var aboutView = function() {
+
     var view = {
         template: 'app/templates/about',
         el: '#content',
+        data: movieApp.data.about,
         init: function() {
-            this.beforeShow();
+            this.beforeRender();
         },
-        beforeShow: function() {
+        beforeRender: function() {
 
-            var post = {
-                title: 'My First Post',
-                date: '10/10/2013'
-            };
             var template = movieApp.Templates[this.template];
-            var html = template(post);
+            var html = template(this.data);
             this.render(html);
 
         },
         render: function(html) {
-
-            var container = document.querySelector(this.el);
-            container.innerHTML = html;
-
+            movieApp.helper.setHtml(this.el, html);
         }
     };
 
