@@ -1,10 +1,11 @@
 frontend2
 =========
 
-Algemeen
+# Best Practice Javascript
 
-Html
+Use Camelcase
+Use Namespaces
+Use Modules
+Houd je bestanden zo veel mogelijk per functie gescheiden
+MVC methode gebruiken
 
-Css
-
-Javascript
