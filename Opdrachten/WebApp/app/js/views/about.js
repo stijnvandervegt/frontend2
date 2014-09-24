@@ -1,4 +1,4 @@
-var aboutView = function() {
+var aboutView = (function() {
 
     function About() {
 

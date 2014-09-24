@@ -1,4 +1,4 @@
-var movieView = function() {
+var movieView = (function() {
 
     var view = {
         template: 'app/templates/movie',
