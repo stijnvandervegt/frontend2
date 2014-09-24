@@ -1274,6 +1274,27 @@ var movieApp = movieApp || {};
     return movieApp;
 
 })();
+var View = (function() {
+
+    function View(template, el) {
+        this.template = template;
+        this.el = el;
+    }
+    View.prototype.init = function() {
+
+        if(typeof this.beforeRender != 'undefined') {
+            this.beforeRender();
+        } else {
+            this.render('');
+        }
+    }
+    View.prototype.render = function(html) {
+        movieApp.helper.setHtml(this.el, html);
+    }
+
+    return View;
+
+})();
 this["movieApp"] = this["movieApp"] || {};
 this["movieApp"]["Templates"] = this["movieApp"]["Templates"] || {};
 
@@ -1283,13 +1304,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
 
-  buffer += "<section class=\"about\">\n    <header>\n        <h1>";
+  buffer += "<section class=\"about\">\r\n    <header>\r\n        <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\n        <p>"
+    + "</h1>\r\n        <p>"
     + escapeExpression((helper = helpers['strip-scripts'] || (depth0 && depth0['strip-scripts']),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.content), options) : helperMissing.call(depth0, "strip-scripts", (depth0 && depth0.content), options)))
-    + "</p>\n    </header>\n</section>";
+    + "</p>\r\n    </header>\r\n</section>";
   return buffer;
   });
 
@@ -1301,15 +1322,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n      <article>\n         <header>\n             <h1>";
+  buffer += "\r\n      <article>\r\n         <header>\r\n             <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\n             <em>Release date: <time>";
+    + "</h1>\r\n             <em>Release date: <time>";
   if (helper = helpers.date) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.date); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</time></em>\n         </header>\n           <figure>\n             <img src=\"";
+    + "</time></em>\r\n         </header>\r\n           <figure>\r\n             <img src=\"";
   if (helper = helpers.image) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.image); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -1317,22 +1338,22 @@ function program1(depth0,data) {
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n         </figure>\n         <p>";
+    + "\">\r\n         </figure>\r\n         <p>";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</p>\n      </article>\n      ";
+    + "</p>\r\n      </article>\r\n      ";
   return buffer;
   }
 
-  buffer += "<section class=\"movie\">\n     <h1>";
+  buffer += "<section class=\"movie\">\r\n     <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\n      ";
+    + "</h1>\r\n      ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.movies), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</section>";
+  buffer += "\r\n</section>";
   return buffer;
   });
 (function(movieApp) {
@@ -1398,26 +1419,22 @@ var router = function(movieApp) {
 }(movieApp || {});
 var aboutView = function() {
 
-    var view = {
-        template: 'app/templates/about',
-        el: '#content',
-        data: movieApp.data.about,
-        init: function() {
-            this.beforeRender();
-        },
-        beforeRender: function() {
+    function About() {
 
+        this.template = 'app/templates/about';
+        this.el = '#content';
+        this.data = movieApp.data.about,
+        this.beforeRender = function() {
             var template = movieApp.Templates[this.template];
             var html = template(this.data);
             this.render(html);
-
-        },
-        render: function(html) {
-            movieApp.helper.setHtml(this.el, html);
         }
-    };
 
-    return view;
+    }
+
+    About.prototype = new View();
+
+    return  new About();
 
 }();
 var movieView = function() {

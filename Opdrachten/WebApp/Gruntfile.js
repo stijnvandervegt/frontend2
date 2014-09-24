@@ -23,6 +23,7 @@ module.exports = function(grunt) {
                     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
                     'app/components/director/build/director.js',
                     'app/js/helpers/*.js',
+                    'app/js/libraries/*.js',
                     'app/js/templates/*.js',
                     'app/js/managers/*.js',
                     'app/js/routers/*.js',
