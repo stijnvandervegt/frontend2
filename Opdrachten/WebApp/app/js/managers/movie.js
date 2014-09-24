@@ -33,7 +33,7 @@
                     description: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
                 }
             ]
-        }
+        }        
     };
 
 })();
