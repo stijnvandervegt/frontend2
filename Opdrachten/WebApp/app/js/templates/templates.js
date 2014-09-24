@@ -7,13 +7,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
 
 
-  buffer += "<section class=\"about\">\r\n    <header>\r\n        <h1>";
+  buffer += "<section class=\"about\">\n    <header>\n        <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\r\n        <p>"
+    + "</h1>\n        <p>"
     + escapeExpression((helper = helpers['strip-scripts'] || (depth0 && depth0['strip-scripts']),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.content), options) : helperMissing.call(depth0, "strip-scripts", (depth0 && depth0.content), options)))
-    + "</p>\r\n    </header>\r\n</section>";
+    + "</p>\n    </header>\n</section>";
   return buffer;
   });
 
@@ -25,15 +25,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n      <article>\r\n         <header>\r\n             <h1>";
+  buffer += "\n      <article>\n         <header>\n             <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\r\n             <em>Release date: <time>";
+    + "</h1>\n             <em>Release date: <time>";
   if (helper = helpers.date) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.date); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</time></em>\r\n         </header>\r\n           <figure>\r\n             <img src=\"";
+    + "</time></em>\n         </header>\n           <figure>\n             <img src=\"";
   if (helper = helpers.image) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.image); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -41,21 +41,21 @@ function program1(depth0,data) {
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\r\n         </figure>\r\n         <p>";
+    + "\">\n         </figure>\n         <p>";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</p>\r\n      </article>\r\n      ";
+    + "</p>\n      </article>\n      ";
   return buffer;
   }
 
-  buffer += "<section class=\"movie\">\r\n     <h1>";
+  buffer += "<section class=\"movie\">\n     <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\r\n      ";
+    + "</h1>\n      ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.movies), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</section>";
+  buffer += "\n</section>";
   return buffer;
   });
