@@ -15,6 +15,6 @@ var aboutView = function() {
 
     About.prototype = new View();
 
-    return  new About();
+    return new About();
 
 }();
