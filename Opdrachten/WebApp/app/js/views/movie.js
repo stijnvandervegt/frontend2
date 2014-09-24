@@ -8,10 +8,18 @@
             this.beforeRender();
         },
         beforeRender: function() {
+            var _this = this;
+            movieApp.managers.movie.getData(function(movies) {
+                
+                var template = movieApp.Templates[_this.template];
+                
+                //overwrite movie object
+                _this.data.movies = movies;
+                var html = template(_this.data);
+                
+                _this.render(html);
 
-            var template = movieApp.Templates[this.template];
-            var html = template(this.data);
-            this.render(html);
+            });
 
         },
         render: function(html) {

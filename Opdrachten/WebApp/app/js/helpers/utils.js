@@ -8,7 +8,7 @@
             var container = document.querySelector(el);
             container.innerHTML = html;
         },
-        xhr:{
+        xhr: {
 			trigger: function (type, url, success, data) {
 				var req = new XMLHttpRequest;
 				req.open(type, url, true);
