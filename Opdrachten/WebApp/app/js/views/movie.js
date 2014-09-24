@@ -1,6 +1,6 @@
-var movieView = (function() {
+(function() {
 
-    var view = {
+    movieApp.views.movie = {
         template: 'app/templates/movie',
         el: '#content',
         data: movieApp.data.movies,
@@ -15,10 +15,8 @@ var movieView = (function() {
 
         },
         render: function(html) {
-            movieApp.helper.setHtml(this.el, html);
+            movieApp.utils.setHtml(this.el, html);
         }
     };
 
-    return view;
-
-}();
+})();

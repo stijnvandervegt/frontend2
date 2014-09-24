@@ -1248,6 +1248,8 @@ Router.prototype.mount = function(routes, path) {
 
 
 }(typeof exports === "object" ? exports : window));
+var movieApp = movieApp || {};
+movieApp.views = movieApp.views || {};
 (function() {
 
     Handlebars.registerHelper('strip-scripts', function(context) {
@@ -1258,10 +1260,9 @@ Router.prototype.mount = function(routes, path) {
     });
 
 })();
-var movieApp = movieApp || {};
 (function() {
 
-    movieApp.helper = {
+    movieApp.utils = {
         append: function(el, html) {
             document.querySelector(el).appendChild(html);
         },
@@ -1271,10 +1272,8 @@ var movieApp = movieApp || {};
         }
     };
 
-    return movieApp;
-
 })();
-var View = (function() {
+(function() {
 
     function View(template, el) {
         this.template = template;
@@ -1289,10 +1288,10 @@ var View = (function() {
         }
     }
     View.prototype.render = function(html) {
-        movieApp.helper.setHtml(this.el, html);
+        movieApp.utils.setHtml(this.el, html);
     }
 
-    return View;
+    movieApp.View = View;
 
 })();
 this["movieApp"] = this["movieApp"] || {};
@@ -1356,7 +1355,7 @@ function program1(depth0,data) {
   buffer += "\n</section>";
   return buffer;
   });
-(function(movieApp) {
+(function() {
 
     movieApp.data = {
         about: {
@@ -1394,18 +1393,16 @@ function program1(depth0,data) {
         }
     };
 
-    return movieApp;
-
-})(movieApp || {});
-var router = function(movieApp) {
+})();
+(function() {
 
     var showAbout = function() {
-        console.log('about');
-        aboutView.init();
+        console.log('about');        
+        movieApp.views.about.init();
     };
     var showMovies = function() {
         console.log('movie');
-        movieView.init();
+        movieApp.views.movie.init();
     };
 
     // Set Router from direction router library.
@@ -1414,10 +1411,9 @@ var router = function(movieApp) {
         '/movies': showMovies
     });
 
-    return movieApp;
 
-}(movieApp || {});
-var aboutView = function() {
+})();
+(function() {
 
     function About() {
 
@@ -1432,14 +1428,14 @@ var aboutView = function() {
 
     }
 
-    About.prototype = new View();
+    About.prototype = new movieApp.View();
 
-    return new About();
+    movieApp.views.about = new About();
+    
+})();
+(function() {
 
-}();
-var movieView = function() {
-
-    var view = {
+    movieApp.views.movie = {
         template: 'app/templates/movie',
         el: '#content',
         data: movieApp.data.movies,
@@ -1454,21 +1450,17 @@ var movieView = function() {
 
         },
         render: function(html) {
-            movieApp.helper.setHtml(this.el, html);
+            movieApp.utils.setHtml(this.el, html);
         }
     };
 
-    return view;
-
-}();
-var movieApp = movieApp || {};
+})();
 (function() {
     movieApp.controller = {
         init: function() {
 
             // set router
             movieApp.router.init();
-
         }
     };
 

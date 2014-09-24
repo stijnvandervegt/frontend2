@@ -1,4 +1,4 @@
-(function(movieApp) {
+(function() {
 
     movieApp.data = {
         about: {
@@ -36,6 +36,4 @@
         }
     };
 
-    return movieApp;
-
-})(movieApp || {});
+})();

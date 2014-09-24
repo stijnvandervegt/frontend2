@@ -1,7 +1,6 @@
-var movieApp = movieApp || {};
 (function() {
 
-    movieApp.helper = {
+    movieApp.utils = {
         append: function(el, html) {
             document.querySelector(el).appendChild(html);
         },
@@ -10,7 +9,5 @@ var movieApp = movieApp || {};
             container.innerHTML = html;
         }
     };
-
-    return movieApp;
 
 })();

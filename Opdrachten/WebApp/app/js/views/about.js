@@ -1,4 +1,4 @@
-var aboutView = (function() {
+(function() {
 
     function About() {
 
@@ -13,8 +13,8 @@ var aboutView = (function() {
 
     }
 
-    About.prototype = new View();
+    About.prototype = new movieApp.View();
 
-    return new About();
-
-}();
+    movieApp.views.about = new About();
+    
+})();

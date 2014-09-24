@@ -1,4 +1,4 @@
-var View = (function() {
+(function() {
 
     function View(template, el) {
         this.template = template;
@@ -13,9 +13,9 @@ var View = (function() {
         }
     }
     View.prototype.render = function(html) {
-        movieApp.helper.setHtml(this.el, html);
+        movieApp.utils.setHtml(this.el, html);
     }
 
-    return View;
+    movieApp.View = View;
 
 })();
