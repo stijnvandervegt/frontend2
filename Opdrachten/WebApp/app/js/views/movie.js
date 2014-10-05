@@ -15,6 +15,11 @@
                 
                 //overwrite movie object
                 _this.data.movies = movies;
+
+                //filter data
+                console.log(filter(_this.data.movies));
+
+
                 var html = template(_this.data);
                 
                 _this.render(html);
