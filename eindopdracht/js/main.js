@@ -29,7 +29,7 @@
     // Get element and return function
     function getEl(target) {      
         return function(fn) {            
-            return (exists(document.querySelector(target))) ? fn(document.querySelector(target)) : fail('element is not found');  
+            return (exists(document.querySelector(target))) ? fn(document.querySelector(target)) : fail('element is not found'+ target);  
         }      
     }
     // Calls the function @action1 when @condition is met and @action2 if it is not.
@@ -77,13 +77,15 @@
 
     // Add event listener to an element or an parent element with childs
     function eventListener(el) {        
-        return function(type, fn, child) {                          
+        return function(type, fn, child, options) {                          
             if(exists(child)) {
                 el.addEventListener(type, function(e) {                            
-                    (e.toElement.localName == child) ? fn(e) : false;                
+                    (e.toElement.localName == child) ? fn(e, options) : false;                
                 });
             } else {
-                el.addEventListener(type, fn);
+                el.addEventListener(type, function(e) {
+                    fn(e, options);
+                });
             }
         }
     }
@@ -97,39 +99,71 @@
                 
 
                 return movie;
-                }),
+            })            
+        };
+    }
+
+    function setGenres(data) {
+        return {
             genres: _.reduceRight(_.pluck(data, 'genres'), function(a, b) { return _.sortBy(_.union(a, b)); }, [])
         };
     }
 
-    function filter(e) {
-        
-        console.log(filterObject(e.target.getAttribute('data-value'), 'genres', setMovies(getData(settings.url))['movies']));
-        return function(type, data) {            
-            return filterObject(e.target.getAttribute('data-value'), type, data); 
-        }
+    function filter(e, options) {
+        console.log(options);
 
+        options.fn
+        (
+           options.template        
+            (
+                setMovies(filterObject(e.target.getAttribute('data-value'), options.type, options.data))
+            )
+        );
+        
+        //console.log(setMovies(filterObject(e.target.getAttribute('data-value'), options.type, options.data)));
+        //console.log(options.fn(options.template)(filterObject(e.target.getAttribute('data-value'), options.type, options.data)));
+        //return filterObject(e.target.getAttribute('data-value'), options.type, options.data);
+       
     }
 
     function filterObject(filter, model, data) {
-        return _.filter(data, function(item) {            
-            return (_.contains(item[model], filter)) ? item : false;
+        console.log(filter, model);
+       
+        return _.filter(data, function(item) {                    
+            return (exists(item[model]) && _.contains(item[model], filter)) ? item : false;
         });
     }
 
-    function movies(param) {                            
-        console.log(setMovies(getData(settings.url)));
-        getEl('.wrapper')(printHtml)(_.template(getEl('#movies')(getHtml))(setMovies(getData(settings.url))));
-        getEl('.filter')(eventListener)('click', filter, 'a');
+    function movies(param) {                                    
+        getEl('.main')(printHtml)(_.template(getEl('#movies')(getHtml))(setMovies(getData(settings.url))));
+        getEl('.tools')(printHtml)(_.template(getEl('#genres')(getHtml))(setGenres(getData(settings.url))));
+
+        getEl('.filter')
+            (eventListener)
+                (
+                    'click', 
+                    filter, 
+                    'a', 
+                    {
+                        type: 'genres',
+                        data: setMovies(getData(settings.url))['movies'],
+                        fn:  getEl('.main')(printHtml),
+                        template: _.template(getEl('#movies')(getHtml))                            
+                    }
+
+            );
+
     }
     function movieSingle(param) {
         console.log(param.id);
         console.log(getData(settings.url+'/'+param.id));
-        getEl('.wrapper')(printHtml)(_.template(getEl('#singleMovie')(getHtml))(getData(settings.url+'/'+param.id)));
+        getEl('.main')(printHtml)(_.template(getEl('#singleMovie')(getHtml))(getData(settings.url+'/'+param.id)));        
+
+
     }
 
     function about() {
-        getEl('.wrapper')(printHtml)(_.template(getEl('#about')(getHtml))());
+        getEl('.main')(printHtml)(_.template(getEl('#about')(getHtml))());
     }
 
     // Pages

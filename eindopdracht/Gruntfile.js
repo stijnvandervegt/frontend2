@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-    grunt.initConfig({
+    grunt.initConfig({        
         pkg: grunt.file.readJSON('package.json'),
         copy: {
             main: {
@@ -36,18 +36,43 @@ module.exports = function(grunt) {
                     'static/js/all.min.js': ['<%= concat.dist.dest %>']
                 }
             }
+        },
+        sass: {
+            dev: {
+                options: {
+                style: 'expanded',
+                banner: 'Sass',
+                compass: false
+            },
+            files: {
+                'static/css/style.css': 'scss/*.scss'
+            }
+          },
+          dist: {
+            options: {
+                style: 'compressed',
+                compass: false
+            },
+            files: {
+                'static/css/style.css': 'scss/*.scss'
+            }
+          }
         },       
         watch: {
             scripts: {
                 files: ['**/*.js'],
                 tasks: ['concat']
+            },
+            sass: {
+                files: 'scss/{,*/}*.{scss,sass}',
+                tasks: ['sass:dev']
             }
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    
+    grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
