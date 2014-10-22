@@ -1,5 +1,7 @@
 <section class="movie">
      <h1>{{ title }}</h1>
+     
+
       {{#each movies}}
       <article>
          <header>
@@ -11,6 +13,7 @@
              <img src="{{ image }}" alt="{{ title }}">
          </figure>
          <p>{{ description }}</p>
+        <a href="/app/#/movies/{{ id }}">Meer info</a>
       </article>
       {{/each}}
 </section>

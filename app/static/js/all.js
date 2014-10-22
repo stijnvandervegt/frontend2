@@ -529,6 +529,143 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
   return __module0__;
 })();
 
+// doT.js
+// 2011, Laura Doktorova, https://github.com/olado/doT
+// Licensed under the MIT license.
+
+(function() {
+	"use strict";
+
+	var doT = {
+		version: '1.0.1',
+		templateSettings: {
+			evaluate:    /\{\{([\s\S]+?(\}?)+)\}\}/g,
+			interpolate: /\{\{=([\s\S]+?)\}\}/g,
+			encode:      /\{\{!([\s\S]+?)\}\}/g,
+			use:         /\{\{#([\s\S]+?)\}\}/g,
+			useParams:   /(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})/g,
+			define:      /\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}/g,
+			defineParams:/^\s*([\w$]+):([\s\S]+)/,
+			conditional: /\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}/g,
+			iterate:     /\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})/g,
+			varname:	'it',
+			strip:		true,
+			append:		true,
+			selfcontained: false
+		},
+		template: undefined, //fn, compile template
+		compile:  undefined  //fn, for express
+	}, global;
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = doT;
+	} else if (typeof define === 'function' && define.amd) {
+		define(function(){return doT;});
+	} else {
+		global = (function(){ return this || (0,eval)('this'); }());
+		global.doT = doT;
+	}
+
+	function encodeHTMLSource() {
+		var encodeHTMLRules = { "&": "&#38;", "<": "&#60;", ">": "&#62;", '"': '&#34;', "'": '&#39;', "/": '&#47;' },
+			matchHTML = /&(?!#?\w+;)|<|>|"|'|\//g;
+		return function() {
+			return this ? this.replace(matchHTML, function(m) {return encodeHTMLRules[m] || m;}) : this;
+		};
+	}
+	String.prototype.encodeHTML = encodeHTMLSource();
+
+	var startend = {
+		append: { start: "'+(",      end: ")+'",      endencode: "||'').toString().encodeHTML()+'" },
+		split:  { start: "';out+=(", end: ");out+='", endencode: "||'').toString().encodeHTML();out+='"}
+	}, skip = /$^/;
+
+	function resolveDefs(c, block, def) {
+		return ((typeof block === 'string') ? block : block.toString())
+		.replace(c.define || skip, function(m, code, assign, value) {
+			if (code.indexOf('def.') === 0) {
+				code = code.substring(4);
+			}
+			if (!(code in def)) {
+				if (assign === ':') {
+					if (c.defineParams) value.replace(c.defineParams, function(m, param, v) {
+						def[code] = {arg: param, text: v};
+					});
+					if (!(code in def)) def[code]= value;
+				} else {
+					new Function("def", "def['"+code+"']=" + value)(def);
+				}
+			}
+			return '';
+		})
+		.replace(c.use || skip, function(m, code) {
+			if (c.useParams) code = code.replace(c.useParams, function(m, s, d, param) {
+				if (def[d] && def[d].arg && param) {
+					var rw = (d+":"+param).replace(/'|\\/g, '_');
+					def.__exp = def.__exp || {};
+					def.__exp[rw] = def[d].text.replace(new RegExp("(^|[^\\w$])" + def[d].arg + "([^\\w$])", "g"), "$1" + param + "$2");
+					return s + "def.__exp['"+rw+"']";
+				}
+			});
+			var v = new Function("def", "return " + code)(def);
+			return v ? resolveDefs(c, v, def) : v;
+		});
+	}
+
+	function unescape(code) {
+		return code.replace(/\\('|\\)/g, "$1").replace(/[\r\t\n]/g, ' ');
+	}
+
+	doT.template = function(tmpl, c, def) {
+		c = c || doT.templateSettings;
+		var cse = c.append ? startend.append : startend.split, needhtmlencode, sid = 0, indv,
+			str  = (c.use || c.define) ? resolveDefs(c, tmpl, def || {}) : tmpl;
+
+		str = ("var out='" + (c.strip ? str.replace(/(^|\r|\n)\t* +| +\t*(\r|\n|$)/g,' ')
+					.replace(/\r|\n|\t|\/\*[\s\S]*?\*\//g,''): str)
+			.replace(/'|\\/g, '\\$&')
+			.replace(c.interpolate || skip, function(m, code) {
+				return cse.start + unescape(code) + cse.end;
+			})
+			.replace(c.encode || skip, function(m, code) {
+				needhtmlencode = true;
+				return cse.start + unescape(code) + cse.endencode;
+			})
+			.replace(c.conditional || skip, function(m, elsecase, code) {
+				return elsecase ?
+					(code ? "';}else if(" + unescape(code) + "){out+='" : "';}else{out+='") :
+					(code ? "';if(" + unescape(code) + "){out+='" : "';}out+='");
+			})
+			.replace(c.iterate || skip, function(m, iterate, vname, iname) {
+				if (!iterate) return "';} } out+='";
+				sid+=1; indv=iname || "i"+sid; iterate=unescape(iterate);
+				return "';var arr"+sid+"="+iterate+";if(arr"+sid+"){var "+vname+","+indv+"=-1,l"+sid+"=arr"+sid+".length-1;while("+indv+"<l"+sid+"){"
+					+vname+"=arr"+sid+"["+indv+"+=1];out+='";
+			})
+			.replace(c.evaluate || skip, function(m, code) {
+				return "';" + unescape(code) + "out+='";
+			})
+			+ "';return out;")
+			.replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/\r/g, '\\r')
+			.replace(/(\s|;|\}|^|\{)out\+='';/g, '$1').replace(/\+''/g, '')
+			.replace(/(\s|;|\}|^|\{)out\+=''\+/g,'$1out+=');
+
+		if (needhtmlencode && c.selfcontained) {
+			str = "String.prototype.encodeHTML=(" + encodeHTMLSource.toString() + "());" + str;
+		}
+		try {
+			return new Function(c.varname, str);
+		} catch (e) {
+			if (typeof console !== 'undefined') console.log("Could not create a template function: " + str);
+			throw e;
+		}
+	};
+
+	doT.compile = function(tmpl, def) {
+		return doT.template(tmpl, null, def);
+	};
+}());
+
 //     Underscore.js 1.7.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1945,741 +2082,15 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
   }
 }.call(this));
 
-
-
-//
-// Generated on Fri Dec 27 2013 12:02:11 GMT-0500 (EST) by Nodejitsu, Inc (Using Codesurgeon).
-// Version 1.2.2
-//
-
-(function (exports) {
-
-/*
- * browser.js: Browser specific functionality for director.
- *
- * (C) 2011, Nodejitsu Inc.
- * MIT LICENSE
- *
- */
-
-if (!Array.prototype.filter) {
-  Array.prototype.filter = function(filter, that) {
-    var other = [], v;
-    for (var i = 0, n = this.length; i < n; i++) {
-      if (i in this && filter.call(that, v = this[i], i, this)) {
-        other.push(v);
-      }
-    }
-    return other;
-  };
-}
-
-if (!Array.isArray){
-  Array.isArray = function(obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-  };
-}
-
-var dloc = document.location;
-
-function dlocHashEmpty() {
-  // Non-IE browsers return '' when the address bar shows '#'; Director's logic
-  // assumes both mean empty.
-  return dloc.hash === '' || dloc.hash === '#';
-}
-
-var listener = {
-  mode: 'modern',
-  hash: dloc.hash,
-  history: false,
-
-  check: function () {
-    var h = dloc.hash;
-    if (h != this.hash) {
-      this.hash = h;
-      this.onHashChanged();
-    }
-  },
-
-  fire: function () {
-    if (this.mode === 'modern') {
-      this.history === true ? window.onpopstate() : window.onhashchange();
-    }
-    else {
-      this.onHashChanged();
-    }
-  },
-
-  init: function (fn, history) {
-    var self = this;
-    this.history = history;
-
-    if (!Router.listeners) {
-      Router.listeners = [];
-    }
-
-    function onchange(onChangeEvent) {
-      for (var i = 0, l = Router.listeners.length; i < l; i++) {
-        Router.listeners[i](onChangeEvent);
-      }
-    }
-
-    //note IE8 is being counted as 'modern' because it has the hashchange event
-    if ('onhashchange' in window && (document.documentMode === undefined
-      || document.documentMode > 7)) {
-      // At least for now HTML5 history is available for 'modern' browsers only
-      if (this.history === true) {
-        // There is an old bug in Chrome that causes onpopstate to fire even
-        // upon initial page load. Since the handler is run manually in init(),
-        // this would cause Chrome to run it twise. Currently the only
-        // workaround seems to be to set the handler after the initial page load
-        // http://code.google.com/p/chromium/issues/detail?id=63040
-        setTimeout(function() {
-          window.onpopstate = onchange;
-        }, 500);
-      }
-      else {
-        window.onhashchange = onchange;
-      }
-      this.mode = 'modern';
-    }
-    else {
-      //
-      // IE support, based on a concept by Erik Arvidson ...
-      //
-      var frame = document.createElement('iframe');
-      frame.id = 'state-frame';
-      frame.style.display = 'none';
-      document.body.appendChild(frame);
-      this.writeFrame('');
-
-      if ('onpropertychange' in document && 'attachEvent' in document) {
-        document.attachEvent('onpropertychange', function () {
-          if (event.propertyName === 'location') {
-            self.check();
-          }
-        });
-      }
-
-      window.setInterval(function () { self.check(); }, 50);
-
-      this.onHashChanged = onchange;
-      this.mode = 'legacy';
-    }
-
-    Router.listeners.push(fn);
-
-    return this.mode;
-  },
-
-  destroy: function (fn) {
-    if (!Router || !Router.listeners) {
-      return;
-    }
-
-    var listeners = Router.listeners;
-
-    for (var i = listeners.length - 1; i >= 0; i--) {
-      if (listeners[i] === fn) {
-        listeners.splice(i, 1);
-      }
-    }
-  },
-
-  setHash: function (s) {
-    // Mozilla always adds an entry to the history
-    if (this.mode === 'legacy') {
-      this.writeFrame(s);
-    }
-
-    if (this.history === true) {
-      window.history.pushState({}, document.title, s);
-      // Fire an onpopstate event manually since pushing does not obviously
-      // trigger the pop event.
-      this.fire();
-    } else {
-      dloc.hash = (s[0] === '/') ? s : '/' + s;
-    }
-    return this;
-  },
-
-  writeFrame: function (s) {
-    // IE support...
-    var f = document.getElementById('state-frame');
-    var d = f.contentDocument || f.contentWindow.document;
-    d.open();
-    d.write("<script>_hash = '" + s + "'; onload = parent.listener.syncHash;<script>");
-    d.close();
-  },
-
-  syncHash: function () {
-    // IE support...
-    var s = this._hash;
-    if (s != dloc.hash) {
-      dloc.hash = s;
-    }
-    return this;
-  },
-
-  onHashChanged: function () {}
-};
-
-var Router = exports.Router = function (routes) {
-  if (!(this instanceof Router)) return new Router(routes);
-
-  this.params   = {};
-  this.routes   = {};
-  this.methods  = ['on', 'once', 'after', 'before'];
-  this.scope    = [];
-  this._methods = {};
-
-  this._insert = this.insert;
-  this.insert = this.insertEx;
-
-  this.historySupport = (window.history != null ? window.history.pushState : null) != null
-
-  this.configure();
-  this.mount(routes || {});
-};
-
-Router.prototype.init = function (r) {
-  var self = this;
-  this.handler = function(onChangeEvent) {
-    var newURL = onChangeEvent && onChangeEvent.newURL || window.location.hash;
-    var url = self.history === true ? self.getPath() : newURL.replace(/.*#/, '');
-    self.dispatch('on', url.charAt(0) === '/' ? url : '/' + url);
-  };
-
-  listener.init(this.handler, this.history);
-
-  if (this.history === false) {
-    if (dlocHashEmpty() && r) {
-      dloc.hash = r;
-    } else if (!dlocHashEmpty()) {
-      self.dispatch('on', '/' + dloc.hash.replace(/^(#\/|#|\/)/, ''));
-    }
-  }
-  else {
-    var routeTo = dlocHashEmpty() && r ? r : !dlocHashEmpty() ? dloc.hash.replace(/^#/, '') : null;
-    if (routeTo) {
-      window.history.replaceState({}, document.title, routeTo);
-    }
-
-    // Router has been initialized, but due to the chrome bug it will not
-    // yet actually route HTML5 history state changes. Thus, decide if should route.
-    if (routeTo || this.run_in_init === true) {
-      this.handler();
-    }
-  }
-
-  return this;
-};
-
-Router.prototype.explode = function () {
-  var v = this.history === true ? this.getPath() : dloc.hash;
-  if (v.charAt(1) === '/') { v=v.slice(1) }
-  return v.slice(1, v.length).split("/");
-};
-
-Router.prototype.setRoute = function (i, v, val) {
-  var url = this.explode();
-
-  if (typeof i === 'number' && typeof v === 'string') {
-    url[i] = v;
-  }
-  else if (typeof val === 'string') {
-    url.splice(i, v, s);
-  }
-  else {
-    url = [i];
-  }
-
-  listener.setHash(url.join('/'));
-  return url;
-};
-
-//
-// ### function insertEx(method, path, route, parent)
-// #### @method {string} Method to insert the specific `route`.
-// #### @path {Array} Parsed path to insert the `route` at.
-// #### @route {Array|function} Route handlers to insert.
-// #### @parent {Object} **Optional** Parent "routes" to insert into.
-// insert a callback that will only occur once per the matched route.
-//
-Router.prototype.insertEx = function(method, path, route, parent) {
-  if (method === "once") {
-    method = "on";
-    route = function(route) {
-      var once = false;
-      return function() {
-        if (once) return;
-        once = true;
-        return route.apply(this, arguments);
-      };
-    }(route);
-  }
-  return this._insert(method, path, route, parent);
-};
-
-Router.prototype.getRoute = function (v) {
-  var ret = v;
-
-  if (typeof v === "number") {
-    ret = this.explode()[v];
-  }
-  else if (typeof v === "string"){
-    var h = this.explode();
-    ret = h.indexOf(v);
-  }
-  else {
-    ret = this.explode();
-  }
-
-  return ret;
-};
-
-Router.prototype.destroy = function () {
-  listener.destroy(this.handler);
-  return this;
-};
-
-Router.prototype.getPath = function () {
-  var path = window.location.pathname;
-  if (path.substr(0, 1) !== '/') {
-    path = '/' + path;
-  }
-  return path;
-};
-function _every(arr, iterator) {
-  for (var i = 0; i < arr.length; i += 1) {
-    if (iterator(arr[i], i, arr) === false) {
-      return;
-    }
-  }
-}
-
-function _flatten(arr) {
-  var flat = [];
-  for (var i = 0, n = arr.length; i < n; i++) {
-    flat = flat.concat(arr[i]);
-  }
-  return flat;
-}
-
-function _asyncEverySeries(arr, iterator, callback) {
-  if (!arr.length) {
-    return callback();
-  }
-  var completed = 0;
-  (function iterate() {
-    iterator(arr[completed], function(err) {
-      if (err || err === false) {
-        callback(err);
-        callback = function() {};
-      } else {
-        completed += 1;
-        if (completed === arr.length) {
-          callback();
-        } else {
-          iterate();
-        }
-      }
-    });
-  })();
-}
-
-function paramifyString(str, params, mod) {
-  mod = str;
-  for (var param in params) {
-    if (params.hasOwnProperty(param)) {
-      mod = params[param](str);
-      if (mod !== str) {
-        break;
-      }
-    }
-  }
-  return mod === str ? "([._a-zA-Z0-9-]+)" : mod;
-}
-
-function regifyString(str, params) {
-  var matches, last = 0, out = "";
-  while (matches = str.substr(last).match(/[^\w\d\- %@&]*\*[^\w\d\- %@&]*/)) {
-    last = matches.index + matches[0].length;
-    matches[0] = matches[0].replace(/^\*/, "([_.()!\\ %@&a-zA-Z0-9-]+)");
-    out += str.substr(0, matches.index) + matches[0];
-  }
-  str = out += str.substr(last);
-  var captures = str.match(/:([^\/]+)/ig), capture, length;
-  if (captures) {
-    length = captures.length;
-    for (var i = 0; i < length; i++) {
-      capture = captures[i];
-      if (capture.slice(0, 2) === "::") {
-        str = capture.slice(1);
-      } else {
-        str = str.replace(capture, paramifyString(capture, params));
-      }
-    }
-  }
-  return str;
-}
-
-function terminator(routes, delimiter, start, stop) {
-  var last = 0, left = 0, right = 0, start = (start || "(").toString(), stop = (stop || ")").toString(), i;
-  for (i = 0; i < routes.length; i++) {
-    var chunk = routes[i];
-    if (chunk.indexOf(start, last) > chunk.indexOf(stop, last) || ~chunk.indexOf(start, last) && !~chunk.indexOf(stop, last) || !~chunk.indexOf(start, last) && ~chunk.indexOf(stop, last)) {
-      left = chunk.indexOf(start, last);
-      right = chunk.indexOf(stop, last);
-      if (~left && !~right || !~left && ~right) {
-        var tmp = routes.slice(0, (i || 1) + 1).join(delimiter);
-        routes = [ tmp ].concat(routes.slice((i || 1) + 1));
-      }
-      last = (right > left ? right : left) + 1;
-      i = 0;
-    } else {
-      last = 0;
-    }
-  }
-  return routes;
-}
-
-Router.prototype.configure = function(options) {
-  options = options || {};
-  for (var i = 0; i < this.methods.length; i++) {
-    this._methods[this.methods[i]] = true;
-  }
-  this.recurse = options.recurse || this.recurse || false;
-  this.async = options.async || false;
-  this.delimiter = options.delimiter || "/";
-  this.strict = typeof options.strict === "undefined" ? true : options.strict;
-  this.notfound = options.notfound;
-  this.resource = options.resource;
-  this.history = options.html5history && this.historySupport || false;
-  this.run_in_init = this.history === true && options.run_handler_in_init !== false;
-  this.every = {
-    after: options.after || null,
-    before: options.before || null,
-    on: options.on || null
-  };
-  return this;
-};
-
-Router.prototype.param = function(token, matcher) {
-  if (token[0] !== ":") {
-    token = ":" + token;
-  }
-  var compiled = new RegExp(token, "g");
-  this.params[token] = function(str) {
-    return str.replace(compiled, matcher.source || matcher);
-  };
-};
-
-Router.prototype.on = Router.prototype.route = function(method, path, route) {
-  var self = this;
-  if (!route && typeof path == "function") {
-    route = path;
-    path = method;
-    method = "on";
-  }
-  if (Array.isArray(path)) {
-    return path.forEach(function(p) {
-      self.on(method, p, route);
-    });
-  }
-  if (path.source) {
-    path = path.source.replace(/\\\//ig, "/");
-  }
-  if (Array.isArray(method)) {
-    return method.forEach(function(m) {
-      self.on(m.toLowerCase(), path, route);
-    });
-  }
-  path = path.split(new RegExp(this.delimiter));
-  path = terminator(path, this.delimiter);
-  this.insert(method, this.scope.concat(path), route);
-};
-
-Router.prototype.dispatch = function(method, path, callback) {
-  var self = this, fns = this.traverse(method, path, this.routes, ""), invoked = this._invoked, after;
-  this._invoked = true;
-  if (!fns || fns.length === 0) {
-    this.last = [];
-    if (typeof this.notfound === "function") {
-      this.invoke([ this.notfound ], {
-        method: method,
-        path: path
-      }, callback);
-    }
-    return false;
-  }
-  if (this.recurse === "forward") {
-    fns = fns.reverse();
-  }
-  function updateAndInvoke() {
-    self.last = fns.after;
-    self.invoke(self.runlist(fns), self, callback);
-  }
-  after = this.every && this.every.after ? [ this.every.after ].concat(this.last) : [ this.last ];
-  if (after && after.length > 0 && invoked) {
-    if (this.async) {
-      this.invoke(after, this, updateAndInvoke);
-    } else {
-      this.invoke(after, this);
-      updateAndInvoke();
-    }
-    return true;
-  }
-  updateAndInvoke();
-  return true;
-};
-
-Router.prototype.invoke = function(fns, thisArg, callback) {
-  var self = this;
-  var apply;
-  if (this.async) {
-    apply = function(fn, next) {
-      if (Array.isArray(fn)) {
-        return _asyncEverySeries(fn, apply, next);
-      } else if (typeof fn == "function") {
-        fn.apply(thisArg, fns.captures.concat(next));
-      }
-    };
-    _asyncEverySeries(fns, apply, function() {
-      if (callback) {
-        callback.apply(thisArg, arguments);
-      }
-    });
-  } else {
-    apply = function(fn) {
-      if (Array.isArray(fn)) {
-        return _every(fn, apply);
-      } else if (typeof fn === "function") {
-        return fn.apply(thisArg, fns.captures || []);
-      } else if (typeof fn === "string" && self.resource) {
-        self.resource[fn].apply(thisArg, fns.captures || []);
-      }
-    };
-    _every(fns, apply);
-  }
-};
-
-Router.prototype.traverse = function(method, path, routes, regexp, filter) {
-  var fns = [], current, exact, match, next, that;
-  function filterRoutes(routes) {
-    if (!filter) {
-      return routes;
-    }
-    function deepCopy(source) {
-      var result = [];
-      for (var i = 0; i < source.length; i++) {
-        result[i] = Array.isArray(source[i]) ? deepCopy(source[i]) : source[i];
-      }
-      return result;
-    }
-    function applyFilter(fns) {
-      for (var i = fns.length - 1; i >= 0; i--) {
-        if (Array.isArray(fns[i])) {
-          applyFilter(fns[i]);
-          if (fns[i].length === 0) {
-            fns.splice(i, 1);
-          }
-        } else {
-          if (!filter(fns[i])) {
-            fns.splice(i, 1);
-          }
-        }
-      }
-    }
-    var newRoutes = deepCopy(routes);
-    newRoutes.matched = routes.matched;
-    newRoutes.captures = routes.captures;
-    newRoutes.after = routes.after.filter(filter);
-    applyFilter(newRoutes);
-    return newRoutes;
-  }
-  if (path === this.delimiter && routes[method]) {
-    next = [ [ routes.before, routes[method] ].filter(Boolean) ];
-    next.after = [ routes.after ].filter(Boolean);
-    next.matched = true;
-    next.captures = [];
-    return filterRoutes(next);
-  }
-  for (var r in routes) {
-    if (routes.hasOwnProperty(r) && (!this._methods[r] || this._methods[r] && typeof routes[r] === "object" && !Array.isArray(routes[r]))) {
-      current = exact = regexp + this.delimiter + r;
-      if (!this.strict) {
-        exact += "[" + this.delimiter + "]?";
-      }
-      match = path.match(new RegExp("^" + exact));
-      if (!match) {
-        continue;
-      }
-      if (match[0] && match[0] == path && routes[r][method]) {
-        next = [ [ routes[r].before, routes[r][method] ].filter(Boolean) ];
-        next.after = [ routes[r].after ].filter(Boolean);
-        next.matched = true;
-        next.captures = match.slice(1);
-        if (this.recurse && routes === this.routes) {
-          next.push([ routes.before, routes.on ].filter(Boolean));
-          next.after = next.after.concat([ routes.after ].filter(Boolean));
-        }
-        return filterRoutes(next);
-      }
-      next = this.traverse(method, path, routes[r], current);
-      if (next.matched) {
-        if (next.length > 0) {
-          fns = fns.concat(next);
-        }
-        if (this.recurse) {
-          fns.push([ routes[r].before, routes[r].on ].filter(Boolean));
-          next.after = next.after.concat([ routes[r].after ].filter(Boolean));
-          if (routes === this.routes) {
-            fns.push([ routes["before"], routes["on"] ].filter(Boolean));
-            next.after = next.after.concat([ routes["after"] ].filter(Boolean));
-          }
-        }
-        fns.matched = true;
-        fns.captures = next.captures;
-        fns.after = next.after;
-        return filterRoutes(fns);
-      }
-    }
-  }
-  return false;
-};
-
-Router.prototype.insert = function(method, path, route, parent) {
-  var methodType, parentType, isArray, nested, part;
-  path = path.filter(function(p) {
-    return p && p.length > 0;
-  });
-  parent = parent || this.routes;
-  part = path.shift();
-  if (/\:|\*/.test(part) && !/\\d|\\w/.test(part)) {
-    part = regifyString(part, this.params);
-  }
-  if (path.length > 0) {
-    parent[part] = parent[part] || {};
-    return this.insert(method, path, route, parent[part]);
-  }
-  if (!part && !path.length && parent === this.routes) {
-    methodType = typeof parent[method];
-    switch (methodType) {
-     case "function":
-      parent[method] = [ parent[method], route ];
-      return;
-     case "object":
-      parent[method].push(route);
-      return;
-     case "undefined":
-      parent[method] = route;
-      return;
-    }
-    return;
-  }
-  parentType = typeof parent[part];
-  isArray = Array.isArray(parent[part]);
-  if (parent[part] && !isArray && parentType == "object") {
-    methodType = typeof parent[part][method];
-    switch (methodType) {
-     case "function":
-      parent[part][method] = [ parent[part][method], route ];
-      return;
-     case "object":
-      parent[part][method].push(route);
-      return;
-     case "undefined":
-      parent[part][method] = route;
-      return;
-    }
-  } else if (parentType == "undefined") {
-    nested = {};
-    nested[method] = route;
-    parent[part] = nested;
-    return;
-  }
-  throw new Error("Invalid route context: " + parentType);
-};
-
-
-
-Router.prototype.extend = function(methods) {
-  var self = this, len = methods.length, i;
-  function extend(method) {
-    self._methods[method] = true;
-    self[method] = function() {
-      var extra = arguments.length === 1 ? [ method, "" ] : [ method ];
-      self.on.apply(self, extra.concat(Array.prototype.slice.call(arguments)));
-    };
-  }
-  for (i = 0; i < len; i++) {
-    extend(methods[i]);
-  }
-};
-
-Router.prototype.runlist = function(fns) {
-  var runlist = this.every && this.every.before ? [ this.every.before ].concat(_flatten(fns)) : _flatten(fns);
-  if (this.every && this.every.on) {
-    runlist.push(this.every.on);
-  }
-  runlist.captures = fns.captures;
-  runlist.source = fns.source;
-  return runlist;
-};
-
-Router.prototype.mount = function(routes, path) {
-  if (!routes || typeof routes !== "object" || Array.isArray(routes)) {
-    return;
-  }
-  var self = this;
-  path = path || [];
-  if (!Array.isArray(path)) {
-    path = path.split(self.delimiter);
-  }
-  function insertOrMount(route, local) {
-    var rename = route, parts = route.split(self.delimiter), routeType = typeof routes[route], isRoute = parts[0] === "" || !self._methods[parts[0]], event = isRoute ? "on" : rename;
-    if (isRoute) {
-      rename = rename.slice((rename.match(new RegExp("^" + self.delimiter)) || [ "" ])[0].length);
-      parts.shift();
-    }
-    if (isRoute && routeType === "object" && !Array.isArray(routes[route])) {
-      local = local.concat(parts);
-      self.mount(routes[route], local);
-      return;
-    }
-    if (isRoute) {
-      local = local.concat(rename.split(self.delimiter));
-      local = terminator(local, self.delimiter);
-    }
-    self.insert(event, local, routes[route]);
-  }
-  for (var route in routes) {
-    if (routes.hasOwnProperty(route)) {
-      insertOrMount(route, path.slice(0));
-    }
-  }
-};
-
-
-
-}(typeof exports === "object" ? exports : window));
 this["Views"] = this["Views"] || {};
 
 this["Views"]["about"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
+  
 
 
-  buffer += "<section class=\"about\">\r\n    <header>\r\n        <h1>";
-  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</h1>\r\n        <p>"
-    + escapeExpression((helper = helpers['strip-scripts'] || (depth0 && depth0['strip-scripts']),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.content), options) : helperMissing.call(depth0, "strip-scripts", (depth0 && depth0.content), options)))
-    + "</p>\r\n    </header>\r\n</section>";
-  return buffer;
+  return "<section class=\"about\">\n    <header>\n        <h1>About</h1>\n        <p>tekst about</p>\n    </header>\n</section>";
   });
 
 this["Views"]["movie"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -2690,19 +2101,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\r\n      <article>\r\n         <header>\r\n             <h1>";
+  buffer += "\n      <article>\n         <header>\n             <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\r\n             <em>Release date: <time>";
+    + "</h1>\n             <em>Release date: <time>";
   if (helper = helpers.date) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.date); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</time></em>\r\n             <em>Review rate: <time>";
+    + "</time></em>\n             <em>Review rate: <time>";
   if (helper = helpers.reviews) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.reviews); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</time></em>\r\n         </header>\r\n           <figure>\r\n             <img src=\"";
+    + "</time></em>\n         </header>\n           <figure>\n             <img src=\"";
   if (helper = helpers.image) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.image); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -2710,25 +2121,259 @@ function program1(depth0,data) {
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\r\n         </figure>\r\n         <p>";
+    + "\">\n         </figure>\n         <p>";
   if (helper = helpers.description) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.description); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</p>\r\n      </article>\r\n      ";
+    + "</p>\n        <a href=\"/app/#/movies/";
+  if (helper = helpers.id) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.id); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">Meer info</a>\n      </article>\n      ";
   return buffer;
   }
 
-  buffer += "<section class=\"movie\">\r\n     <h1>";
+  buffer += "<section class=\"movie\">\n     <h1>";
   if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</h1>\r\n      ";
+    + "</h1>\n     \n\n      ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.movies), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\r\n</section>";
+  buffer += "\n</section>";
   return buffer;
   });
-(function() {
+
+this["Views"]["moviedetail"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<h1>";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h1>";
+  return buffer;
+  });
+(function(w, d) {
+
+	/*
+	 *
+	 *	Satnav.js Routing
+	 *  @author: Joe Harlow
+	 *
+	 */
+
+	'use strict';
+
+	var _sN,
+		_otherwise,
+		_promise,
+		_current,
+		_params = {},
+		_ = {},
+		_routes = [],
+		_listeners = {},
+		_settings = {
+			poll : 25,							// hashchange Polyfill poll interval
+			html5 : false,						// use pushState if available
+			force : false						// force hashchange events
+		};
+
+	_.setup = function(fn) {
+		var ev = _settings.html5 && 'pushState' in w.history ? 'popstate' : 'hashchange';
+		if (_settings.force) _.force();
+		if (('on' + ev) in w) {
+			_.listen(w, ev, fn);
+		} else {
+			var oH = w.location.href;
+			setInterval(function() {
+				var nH = w.location.href;
+				if (oH !== nH) {
+					oH = nH;
+					fn.call(w);
+				}
+			}, _settings.poll);
+		}
+	};
+
+	_.force = function() {
+		var a = d.getElementsByTagName('a');
+		var _click = function() {
+			var href = this.getAttribute('href');
+			var s = _.sanitize(href.substr(href.indexOf('#') + 1));
+			if (s === _current) {
+				_.change();
+			}
+		};
+
+		for (var i = 0; i < a.length; i++) {
+			var el = a[i];
+			if (el.hasAttribute('href') && el.getAttribute('href').indexOf('#') !== -1) {
+				_.listen(el, 'click', _click);
+			}
+		}
+	};
+
+	_.promise = function() {
+		var _t = this;
+		_t.stack = [];
+
+		_t.then = function(fn) {
+			_t.stack.push(fn);
+		};
+
+		_t.resolve = function() {
+			while (_t.stack.length) {
+				return _t.stack.shift().call(_sN);
+			}
+		};
+	};
+
+	_.route = function(path, directions) {
+		var params = [];
+		path = '^' + path;
+		path = path.replace(/(\?)?\{([^}]+)\}/g, function(match, optional, param) {
+			params.push({ name : param, optional : (typeof optional !== 'undefined') ? true : false });
+			return '([\\w-.]+)?';
+		}).replace(/\//g, '\\/?');
+		path += '\\/?$';
+		_routes.push({ regex : new RegExp(path), params : params, directions : directions });
+	};
+
+	_.change = function() {
+		_current = _.state();
+		var route = _.match(_current);
+		if (route) {
+			var old = _params;
+			_params = route.params;
+			var change = _.dispatch('change', _params, old);
+			if (_settings.html5 && 'pushState' in w.history) {
+				w.history.replaceState(_.extend(_params, { hash : _current }), '{Satnav}', '/' + _current);
+			}
+			var end = function() {
+				route.directions.call(_sN, _params);
+			};
+			if (change instanceof _.promise) {
+				_promise.then(end);
+			} else {
+				end();
+			}
+		} else {
+			w.location.hash = _otherwise || '';
+		}
+	};
+
+	_.sanitize = function(path) {
+		return path.replace(/^\//g, '');
+	};
+
+	_.match = function(h) {
+		for (var r in _routes) {
+			var route = _routes[r];
+			var matched = h.match(route.regex);
+			if (matched) {
+				var p = {};
+				for (var i = 1, len = matched.length; i < len; i++) {
+					if (typeof matched[i] === 'undefined' && !route.params[i-1].optional) {
+						throw new Error('[Satnav] A required route parameter was not defined');
+					} else if (typeof matched[i] !== 'undefined') {
+						p[route.params[i-1].name] = matched[i];
+					}
+				}
+				return { directions : route.directions, params : p };
+			}
+		}
+		return undefined;
+	};
+
+	_.dispatch = function(ev)
+	{
+		var args = Array.prototype.slice.call(arguments, 1);
+		return ev in _listeners && _listeners[ev].apply(_sN, args);
+	};
+
+	_.state = function()
+	{
+		return w.history.state && w.history.state.hash ? w.history.state.hash : _.sanitize(w.location.hash.substr(1));
+	};
+
+	_.extend = function(obj, ext)
+	{
+		for (var prop in ext) {
+			obj[prop] = (obj.hasOwnProperty(prop)) ? obj[prop] : ext[prop];
+		}
+		return obj;
+	};
+
+	_.listen = (function() {
+		if (w.addEventListener) {
+			return function(el, ev, fn) {
+				el.addEventListener(ev, fn, false);
+			};
+		} else if (w.attachEvent) {
+			return function(el, ev, fn) {
+				el.attachEvent('on' + ev, function() { fn.call(el); }, false);
+			};
+		}
+	})();
+
+	_sN = function(config) {
+		_settings = _.extend(config, _settings);
+		return _sN;
+	};
+
+	_sN.defer = (function() {
+		_promise = new _.promise();
+		return _promise;
+	})();
+
+	_sN.resolve = function() {
+		setTimeout(_promise.resolve, 1);
+	};
+
+	_sN.navigate = function(route) {
+		if ('path' in route) {
+			if (_routes.length === 0) {
+				_.setup(_.change);
+			}
+			_.route(_.sanitize(route.path), ('directions' in route) ? route.directions : function() {});
+		} else {
+			throw new Error('[Satnav] A required argument was not defined');
+		}
+		return _sN;
+	};
+
+	_sN.otherwise = function(route) {
+		_otherwise = (typeof route === 'string') ? _.sanitize(route) : ('path' in route) ? _.sanitize(route.path) : '';
+		return _sN;
+	};
+
+	_sN.change = function(fn) {
+		_listeners.change = fn;
+		return _sN;
+	};
+
+	_sN.go = function() {
+		_.change();
+		return _sN;
+	};
+
+	if (typeof w.define === 'function' && w.define.amd) {
+		w.define('Satnav', [], function() {
+			return _sN;
+		});
+	} else if (typeof w.module !== 'undefined' && w.module.exports) {
+		w.module.exports = _sN;
+	} else {
+		w.sN = w.Satnav = _sN;
+	}
+
+})(window, document);
+
+/*(function() {
 	'use strict'
 	
 	var settings = {
@@ -2736,20 +2381,24 @@ function program1(depth0,data) {
 	};
 	
 	// HELPERS
-	 function fail(thing) { throw new Error(thing); }
+	function fail(thing) { throw new Error(thing); }
 	
 	// Returns true if @x is not null
     function exists(x) {
         return x !== null;
     }
 	
+    function notEmpty(x) {
+        return x !== '';
+    }
+
 	// Returns true if @x is not false and not null
     function truthy(x) {
         return (x !== false) && exists(x);
     }
 	
 	// Calls the function @action1 when @condition is met and @action2 if it is not.
-    function doWhen(condition, action1, action2) {
+    function doWhen(condition, action1, action2) {                
         return truthy(condition) ? action1() : action2();
     }
 	
@@ -2767,69 +2416,184 @@ function program1(depth0,data) {
 	
 	function readFileContents(url) {
         var request = chooseRequestObject();
-        request.open("GET", url, false);
-        request.send(null);
-        setData(url, request.responseText);
+        request.open("GET", url, false);    
+        request.send(null);                                   
+        (notEmpty(request.responseText)) ? setData(url, request.responseText) : false;          
         return JSON.parse(request.responseText);
     }
-    function getData(url) {
-        return (typeof localStorage.getItem(url)) ? JSON.parse(localStorage.getItem(url)) : readFileContents(url);
+    // Get data from url or localStorage
+    function getData(url) {        
+        return (localStorage.getItem(url) !== null) ? JSON.parse(localStorage.getItem(url)) : readFileContents(url);
     }
+
+    // Set data in local storage
 	function setData(url, data) {
-        localSorage.setItem(url, data);
+        localStorage.setItem(url, data);
     }
-	function getTarget(target, callback) {		
+	
+    // Get html Target for view
+    function getTarget(target, callback) {	
 		return callback((typeof document.querySelectorAll(target) !== 'undefined') ? document.querySelector(target) : fail('target not found'));		
 	}
 	
 	// ROUTING
-    function showMovies() {
-        print(getHtml('movie', { movies: setMovieData(getData(settings.url)) } ), '.wrapper');
+    function showMovies() {        
+        print(getHtml('movie', { movies: truthy(getData(settings.url)) ? setMovieData(getData(settings.url)) : [] } ), '.wrapper');
     }
-    function showAbout() {
-
+    function showMovie(movieId) {        
+        print(getHtml('moviedetail', searchObject({id: parseInt(movieId)}, getData(settings.url), _.first) ), '.wrapper');
+    }
+    function showAbout() {        
+        print(getHtml('about', {}), '.wrapper');
     }
     function initializePages() {
         return Router({
             '/about': showAbout,
-            '/movies': showMovies
-        });
+            '/movies': showMovies,            
+            '/movies/:movieId': showMovie            
+        });        
     }
 
 	// HANDLEBARS
-	function getHtml(template, data) {
+	function getHtml(template, data) {                   
 		return Views[template](data);
 	}
 
     // DATA
-    function setMovieData(movies) {
-        return _.map(movies, function(movie, i) {
+    function setMovieData(movies) {        
+        return _.map(movies, function(movie, i) {            
             movie.reviews = _.reduce(movie.reviews, function(prev, review) {
                 return prev + review.score;
             }, 0) / movie.reviews.length;
+            
 
             return movie;
         });
     }
+    function searchObject(search, data, action) {      
+        return action(_.where(data, search));
+    }
+    function filterObject(filter, model, data) {
+        return _.filter(data, function(item) {
+            return (model == filter) ? item : [];
+        });
+    }
 
-	// APPLICATION
-	function map() {
-		
-	}
 	
-	function routing() {
-		
-	}
-	
+
+    // APPLICATION	
 	function print(html, target) {
 		return getTarget(target, function(el) {			
 			el.innerHTML = html;
 		});
 	}
-
-	//setPushState();
-
+	
     initializePages().init();
 
+})();*/
 
-})();
+(function() {
+    'use script'
+
+    // Create a save reference to the movieApp
+    var movieApp = function(obj) {
+        if (obj instanceof movieApp) return obj;
+        if (!(this instanceof movieApp)) return new movieApp(obj);
+        this.movieAppwrapped = obj;
+    };
+
+    this.movieApp = movieApp;
+
+    movieApp.version = 0.1;
+
+
+    
+    // Check if something exist
+    function exists(x) { return x !== null; }    
+
+    // Returns true if @x is not false and not null
+    function truth(x) { return (x !== false) && exists(x); }
+
+    //error message
+    function fail(thing) { throw new Error(thing); }
+
+    // Get element and return function
+    function getEl(target) {      
+        return function(fn) {            
+            return (exists(document.querySelector(target))) ? fn(document.querySelector(target)) : fail('element is not found');  
+        }      
+    }
+    // Calls the function @action1 when @condition is met and @action2 if it is not.
+    function doWhen(condition, action1, action2, params) { 
+        console.log(condition);       
+        return truth(condition) ? action1(params) : action2(params);
+    }    
+
+    //print html to element in dom
+    function printHtml(el) {        
+        return function(html) {                   
+            el.innerHTML = html;
+        }
+    }
+
+    // Add event listener to an element or an parent element with childs
+    function eventListener(el) {        
+        return function(type, fn, child) {                          
+            if(exists(child)) {
+                el.addEventListener(type, function(e) {   
+                    console.log(e.toElement.localName, child);             
+                    (e.toElement.localName == child) ? fn(e) : false;                
+                });
+            } else {
+                el.addEventListener(type, fn);
+            }
+        }
+    }
+
+    function filter() {
+        console.log(this);
+    }
+
+    function movies(param) {
+        console.log('movies page');
+        getEl('.wrapper')(printHtml)('test html');
+        getEl('.filter')(eventListener)('click', filter, 'a');
+    }
+    function movieSingle(param) {
+        console.log(param);
+    }
+
+    function about() {
+        console.log('about page');
+    }
+
+    function pageNotFound() {
+        console.log('page not found');
+    }
+
+    // Pages
+    Satnav({
+        html5: false, // don't use pushState
+        force: true, // force change event on same route
+        poll: 100 // poll hash every 100ms if polyfilled
+    })
+    .navigate({
+        path: 'about',
+        directions: function(params) {
+           about();   
+        }
+    })
+    .navigate({
+        path: 'movies/?{optional}',
+        directions: function(params) {              
+            doWhen(params.hasOwnProperty('optional'), movieSingle, movies, params);
+        }
+    })
+    .otherwise('/') 
+    .change(function(params,old) {
+        console.log(params);
+        console.log(old);
+    })
+    .go();
+
+}).call(this);

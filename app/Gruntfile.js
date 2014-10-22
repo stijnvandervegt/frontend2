@@ -21,9 +21,11 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'node_modules/grunt-contrib-handlebars/node_modules/handlebars/dist/handlebars.runtime.js',
+                    'js/components/doT/doT.js',
                     'js/components/underscore/underscore.js',
-                    'js/components/director/build/director.js',
+                    /*'js/components/director/build/director.js',*/
                     'js/templates.js',
+                    'js/components/satnav/dist/satnav.js',
                     'js/function.js'
                 ],
                 dest: 'static/js/all.js'
@@ -51,6 +53,12 @@ module.exports = function(grunt) {
                     "js/templates.js": ["templates/*.html"]
                 }
             }
+        },
+        watch: {
+            scripts: {
+                files: ['**/*.js'],
+                tasks: ['concat']
+            }
         }
     });
 
@@ -58,6 +66,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-handlebars');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['handlebars', 'concat', 'uglify']);
 
