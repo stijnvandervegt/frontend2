@@ -1,0 +1,19 @@
+.tools {
+	background:$blue;
+	padding:20px;
+	width:100%;
+	&.hide {
+		display:none;
+	}	
+	a {
+		padding:4px 7px;
+		background:$white;
+		@include border-radius(3px);
+		color:$fontColor;
+		text-decoration:none;
+		&.active {
+			background: $green;
+			color:$white;
+		}
+	}
+}

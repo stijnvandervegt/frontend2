@@ -22,6 +22,7 @@ module.exports = function(grunt) {
                 src: [                                       
                     'js/components/underscore/underscore.js',                                       
                     'js/components/satnav/dist/satnav.js',
+                    'js/components/hammerjs/hammer.js',
                     'js/main.js'
                 ],
                 dest: 'static/js/all.js'

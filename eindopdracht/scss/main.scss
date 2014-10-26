@@ -1,7 +1,8 @@
 @import 'helpers/mixins',
 		'helpers/variables',
 		'helpers/icons',
-		'helpers/utils';
+		'helpers/utils',
+		'helpers/loader';
 
 @import 'base/reset',
 		'base/typography', 
@@ -10,7 +11,8 @@
 @import 'layout/header';
 
 @import 'components/filters',
-		'components/nav';
+		'components/nav',
+		'components/buttons';
 
 @import 'pages/movies';
 

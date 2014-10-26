@@ -14,3 +14,8 @@
     -webkit-transform: rotate(7deg); /* Chrome, Safari, Opera */
     transform: rotate(7deg);
 }
+@mixin transition($val) {
+	transition: $val;
+	-webkit-transition: $val;
+	-moz-transition: $val;
+}

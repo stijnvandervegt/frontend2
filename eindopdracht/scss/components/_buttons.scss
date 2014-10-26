@@ -1,3 +1,17 @@
 .btn {
 	padding:10px;
 }
+.btn_filter {
+	float:right;
+	display:block;
+	padding: 16px 50px 15px 35px;
+	&:after {
+		@include icon-down(5px, $fontColor);
+		content: '';		
+		left: auto;
+		margin: -10px 0 0;
+		position: absolute;
+		right: 34px;
+			
+	}
+}
