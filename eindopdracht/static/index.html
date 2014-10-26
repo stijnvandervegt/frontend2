@@ -5,11 +5,17 @@
 		
 	</head>
 	<body>
-        <nav>
-        	<a href="#/about" data-page="about">About</a>
-        	<a href="#/movies" data-page="movies">Movies</a>        	
-        </nav>
-        
+		<header class="top">
+			<h1>Movie App</h1>
+			
+	        <a class="filters" href=""></a>
+		</header>
+			<a class="btn_nav" href="">Ga naar...</a>
+			<nav class="global hide">
+	        	<a href="#/about" data-page="about">About</a>
+	        	<a href="#/movies" data-page="movies">Movies</a>        	
+	        </nav>
+
 		<div class="tools">
 		</div>
 
@@ -19,10 +25,10 @@
 		<script type="text/html" id="about">
 
 			<section class="about">
-			    <header>
+			    
 			        <h1>About</h1>
 			        <p>tekst about</p>
-			    </header>
+			    
 			</section>
 
 		</script>
@@ -36,7 +42,7 @@
 			     <% _.each(movies, function(item, key) { %>			      
 			      <article>
 			         <header>
-			             <h1><%= item.title %></h1>
+			             <h2><%= item.title %></h2>
 			             <em>Release date: <time><%= item.date %></time></em>
 			             <em>Review rate: <time><%= item.reviews %></time></em>
 			         </header>

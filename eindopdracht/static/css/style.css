@@ -1,2 +1,138 @@
-*{margin:0;padding:0;border:0}
+Sass
+/* COLORS */
+/* FONTS */
+.icon_home {
+  border-bottom: .938em solid black;
+  border-left: .938em solid transparent;
+  border-right: .938em solid transparent;
+  margin-left: 1.875em;
+}
+.icon_home::before {
+  width: .563em;
+  height: .625em;
+  background: black;
+  margin: .938em 0 0 -.688em;
+}
+.icon_home::after {
+  width: .563em;
+  height: .625em;
+  background: black;
+  margin: .938em 0 0 .125em;
+}
+
+.icon_search {
+  width: .75em;
+  height: .75em;
+  background: white;
+  border: .25em solid black;
+  margin-left: .938em;
+  -webkit-border-radius: 0.625em;
+  -moz-border-radius: 0.625em;
+  border-radius: 0.625em;
+}
+.icon_search::before {
+  width: .25em;
+  height: .875em;
+  margin: .5em 0 0 -.375em;
+  background: black;
+  -ms-transform: rotate(7deg);
+  /* IE 9 */
+  -webkit-transform: rotate(7deg);
+  /* Chrome, Safari, Opera */
+  transform: rotate(7deg);
+}
+
+.hide {
+  display: none;
+}
+
+*,
+body,
+html,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+h1 {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 24px;
+  color: #fff;
+}
+
+h2 {
+  font-size: 16px;
+}
+
+p, a, td, li {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 14px;
+}
+
+body {
+  background: #dedede;
+}
+
+header.top {
+  width: 100%;
+  height: 50px;
+  background: #000;
+}
+header.top h1 {
+  margin: 0;
+  line-height: 50px;
+  text-align: center;
+}
+
+.btn_nav {
+  display: block;
+  color: #848383;
+  position: relative;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 16px 50px 15px 35px;
+  text-align: left;
+  height: auto;
+  background: #fff;
+}
+.btn_nav:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #848383;
+  content: '';
+  left: auto;
+  margin: -4px 0 0;
+  position: absolute;
+  right: 34px;
+  top: 50%;
+}
+
+nav {
+  width: 100%;
+  padding-bottom: 15px;
+  background: #fff;
+}
+nav a {
+  display: block;
+  text-decoration: none;
+  height: 15px;
+  padding: 16px 50px 15px 35px;
+  color: #000;
+  font-weight: bold;
+}
+
+section.movie article {
+  background: #fff;
+  margin: 15px;
+  border: 1px solid #ddd;
+  padding: 20px;
+}
+
 /*# sourceMappingURL=style.css.map */

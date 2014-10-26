@@ -1,5 +1,16 @@
-* {
-	margin:0;
-	padding:0;
-	border:0;
-}
+@import 'helpers/mixins',
+		'helpers/variables',
+		'helpers/icons',
+		'helpers/utils';
+
+@import 'base/reset',
+		'base/typography', 
+		'base/main';
+
+@import 'layout/header';
+
+@import 'components/filters',
+		'components/nav';
+
+@import 'pages/movies';
+

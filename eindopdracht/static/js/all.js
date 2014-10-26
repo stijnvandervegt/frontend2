@@ -1658,11 +1658,30 @@
     //error message
     function fail(thing) { throw new Error(thing); }
 
+    // if you get something out a function
+    function get(x) {
+        return x;
+    }
+
     // Get element and return function
     function getEl(target) {      
         return function(fn) {            
             return (exists(document.querySelector(target))) ? fn(document.querySelector(target)) : fail('element is not found'+ target);  
-        }      
+        }          
+    }
+
+    // Add class from element
+    function addClass(el, className) {        
+        el.className += className;
+    }
+    // Remove class from element
+    function removeClass(el, className) {        
+        el.className = el.className.replace(className, '');
+    }
+    // Toggle Class on element with given options.el and options.className
+    function toggle(el, options) {       
+        console.log(options.el.className);
+        (options.el.className.indexOf(options.className) == -1) ? addClass(options.el, options.className) : removeClass(options.el, options.className);         
     }
     // Calls the function @action1 when @condition is met and @action2 if it is not.
     function doWhen(condition, action1, action2, params) {         
@@ -1708,20 +1727,36 @@
     }
 
     // Add event listener to an element or an parent element with childs
-    function eventListener(el) {        
-        return function(type, fn, child, options) {                          
-            if(exists(child)) {
-                el.addEventListener(type, function(e) {                            
-                    (e.toElement.localName == child) ? fn(e, options) : false;                
-                });
-            } else {
-                el.addEventListener(type, function(e) {
-                    fn(e, options);
-                });
-            }
-        }
+    function addEvent(el, type, child, fn, options) {        
+        if(exists(child)) {                            
+            el.addEventListener(type, function(e) {                  
+                (e.toElement.localName == child) ? fn(e, options) : false;
+                return e.preventDefault();                
+            });
+        } else {                
+            el.addEventListener(type, function(e) {
+                fn(e, options);
+                return e.preventDefault();                
+            });
+        }        
+    }
+    
+    function filter(e, options) {
+        options.fn
+        (
+           options.template        
+            (
+                setMovies(filterObject(e.target.getAttribute('data-value'), options.type, options.data))
+            )
+        );
+        
     }
 
+    function filterObject(filter, model, data) {       
+        return _.filter(data, function(item) {                    
+            return (exists(item[model]) && _.contains(item[model], filter)) ? item : false;
+        });
+    }
     function setMovies(data) {            
          return {
             movies: _.map(data, function(movie, i) {            
@@ -1734,48 +1769,22 @@
             })            
         };
     }
-
     function setGenres(data) {
         return {
             genres: _.reduceRight(_.pluck(data, 'genres'), function(a, b) { return _.sortBy(_.union(a, b)); }, [])
         };
     }
-
-    function filter(e, options) {
-        console.log(options);
-
-        options.fn
-        (
-           options.template        
-            (
-                setMovies(filterObject(e.target.getAttribute('data-value'), options.type, options.data))
-            )
-        );
-        
-        //console.log(setMovies(filterObject(e.target.getAttribute('data-value'), options.type, options.data)));
-        //console.log(options.fn(options.template)(filterObject(e.target.getAttribute('data-value'), options.type, options.data)));
-        //return filterObject(e.target.getAttribute('data-value'), options.type, options.data);
-       
-    }
-
-    function filterObject(filter, model, data) {
-        console.log(filter, model);
-       
-        return _.filter(data, function(item) {                    
-            return (exists(item[model]) && _.contains(item[model], filter)) ? item : false;
-        });
-    }
-
     function movies(param) {                                    
         getEl('.main')(printHtml)(_.template(getEl('#movies')(getHtml))(setMovies(getData(settings.url))));
         getEl('.tools')(printHtml)(_.template(getEl('#genres')(getHtml))(setGenres(getData(settings.url))));
 
-        getEl('.filter')
-            (eventListener)
+        
+        addEvent
                 (
-                    'click', 
-                    filter, 
+                    getEl('.filter')(get),
+                    'click',                     
                     'a', 
+                    filter,                     
                     {
                         type: 'genres',
                         data: setMovies(getData(settings.url))['movies'],
@@ -1785,17 +1794,28 @@
 
             );
 
+        
+
     }
-    function movieSingle(param) {
-        console.log(param.id);
-        console.log(getData(settings.url+'/'+param.id));
+    function movieSingle(param) {        
         getEl('.main')(printHtml)(_.template(getEl('#singleMovie')(getHtml))(getData(settings.url+'/'+param.id)));        
-
-
     }
 
     function about() {
         getEl('.main')(printHtml)(_.template(getEl('#about')(getHtml))());
+    }
+
+    function setNav() {
+        addEvent(
+            getEl('.btn_nav')(get), 
+            'click', 
+            'a', 
+            toggle, 
+            {
+                className: 'hide',
+                el: getEl('nav.global')(get)
+            }   
+        );          
     }
 
     // Pages
@@ -1805,20 +1825,26 @@
         poll: 100 // poll hash every 100ms if polyfilled
     })
     .navigate({
+        path: '/',
+        directions: function(params) {           
+           setNav();
+           about();   
+        }
+    })
+    .navigate({
         path: 'about',
-        directions: function(params) {
+        directions: function(params) {           
            about();   
         }
     })
     .navigate({
         path: 'movies/?{id}',
-        directions: function(params) {              
+        directions: function(params) {                          
             doWhen(params.hasOwnProperty('id'), movieSingle, movies, params);
         }
     })
     .otherwise('/') 
-    .change(function(params,old) {
-        
+    .change(function(params,old) {        
     })
     .go();
 
