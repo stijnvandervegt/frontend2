@@ -59,3 +59,11 @@ body {margin: 30px;}
 	border-right: $px solid transparent;	
 	border-top: $px solid $color;
 }
+@mixin icon-right($px, $color) {
+  width: 0; 
+  height: 0; 
+  border-left: $px solid $color;
+  border-right: $px solid transparent;  
+  border-top: $px solid transparent;
+  border-bottom: $px solid transparent;
+}

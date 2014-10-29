@@ -19,3 +19,11 @@
 	-webkit-transition: $val;
 	-moz-transition: $val;
 }
+
+@mixin clearfix(){
+	content: ".";
+	visibility: hidden;
+	display: block;
+	height: 0;
+	clear: both;
+} 

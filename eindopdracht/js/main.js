@@ -1,5 +1,5 @@
 (function() {
-    'use script'
+    'use strict'
 
     // Create a save reference to the movieApp
     var movieApp = function(obj) {
@@ -7,7 +7,7 @@
         if (!(this instanceof movieApp)) return new movieApp(obj);
         this.movieAppwrapped = obj;
     };
-
+    // Add some info to the movieApp. 
     this.movieApp = movieApp;
 
     movieApp.version = 0.1;
@@ -17,6 +17,8 @@
         url: 'http://dennistel.nl/movies'
     };    
     
+    /* ---HELPERS--- */
+
     // Check if something exist
     function exists(x) { return x !== null; }    
 
@@ -27,10 +29,50 @@
     function fail(thing) { throw new Error(thing); }
 
     // if you get something out a function
-    function get(x) {
-        return x;
+    function get(x) { return x; }
+
+     // Calls the function @action1 when @condition is met and @action2 if it is not.
+    function doWhen(condition, action1, action2, params) {         
+        return truth(condition) ? action1(params) : action2(params);
+    }    
+    // Returns an instantiation of object @Target if it exists in the environment.
+    function instantiateIfExists(Target) {
+        return doWhen(exists(Target), function () {
+            return new Target();
+        });
+    }    
+      
+    // Hash change
+    function hashChange(route) {
+        location.hash = '/'+ route +'/';
     }
 
+    /* HTML DOM ELEMENTS */
+
+    // Add class from element
+    function addClass(el, className) {        
+        el.className += className;
+    }
+    
+    // Remove class from element
+    function removeClass(el, className) {        
+        el.className = el.className.replace(className, '');
+    }
+    
+    // Toggle Class on element with given options.el and options.className
+    function toggleClass(el, options) {       
+        (options.el.className.indexOf(options.className) == -1) ? addClass(options.el, options.className) : removeClass(options.el, options.className);         
+    }    
+    
+    // Get attribute
+    function getAttr(el, attr) {
+        return (exists(el)) ? el.getAttribute(attr) : fail('element not exist'+el);
+    }
+
+    // Toggle Attribute 
+    function toggleAttribute(el, attr, value) {
+        (el.getAttribute(attr) !== value) ? el.setAttribute(attr, value) : el.setAttribute(attr, '');
+    }
     // Get element and return function
     function getEl(target, all) {      
         return function(fn) {            
@@ -41,34 +83,29 @@
             }
         }          
     }
-  
-    // Hash change
-    function hashChange(route) {
-        location.hash = '/'+ route +'/';
+
+    // Print html to element in dom
+    function printHtml(el) {                
+        return function(html) {                   
+            el.innerHTML = html;
+        }
     }
 
-    // Add class from element
-    function addClass(el, className) {        
-        el.className += className;
+    // Get html from element
+    function getHtml(el) {
+         return el.innerHTML;
     }
-    // Remove class from element
-    function removeClass(el, className) {        
-        el.className = el.className.replace(className, '');
-    }
-    // Toggle Class on element with given options.el and options.className
-    function toggleClass(el, options) {       
-        (options.el.className.indexOf(options.className) == -1) ? addClass(options.el, options.className) : removeClass(options.el, options.className);         
-    }    
-    // Calls the function @action1 when @condition is met and @action2 if it is not.
-    function doWhen(condition, action1, action2, params) {         
-        return truth(condition) ? action1(params) : action2(params);
-    }    
-    // Returns an instantiation of object @Target if it exists in the environment.
-    function instantiateIfExists(Target) {
-        return doWhen(exists(Target), function () {
-            return new Target();
+
+     // Compare elements attribute with value
+    function compareAttribute(elements, value, compare) {
+        return _.map(elements, function(item) {                          
+                return (item.className == compare) ? item.getAttribute(value) : false;            
+            return item;
         });
-    }    
+    }
+
+    /* ---REQUEST--- */
+
     // Returns a request object that can read files based on the users browser environment
     function chooseRequestObject() {
         return instantiateIfExists(window.XMLHttpRequest) || instantiateIfExists(window.ActiveXObject) || fail("Your platform doesn't support HTTP request objects");
@@ -81,110 +118,99 @@
         return JSON.parse(request.responseText);
     }
 
-    //print html to element in dom
-    function printHtml(el) {                
-        return function(html) {                   
-            el.innerHTML = html;
-        }
-    }
-
-    // get html from element
-    function getHtml(el) {
-         return el.innerHTML;
-    }
-
+    
     // Set data in local storage
     function setData(url, data) {
         localStorage.setItem(url, data);
     }
 
+    // Get data from localstorage if exsist if not: do an request
     function getData(url) {        
         return (localStorage.getItem(url) !== null) ? JSON.parse(localStorage.getItem(url)) : readFileContents(url);
     }
 
+    /* ---EVENT LISTENERS--- */
 
     // Add event listener to an element or an parent element with childs
     function addEvent(el, type, child, fn, options) {        
-        if(exists(child)) {                            
-            el.addEventListener(type, function(e) {                  
-                (e.toElement.localName == child) ? fn(e, options) : false;
-                return e.preventDefault();                
-            });
-        } else {                
-            el.addEventListener(type, function(e) {
-                fn(e, options);
-                return e.preventDefault();                
-            });
-        }        
+                                    
+        el.addEventListener(type, function(e) {                        
+            if(exists(child)) {                              
+                (e.target.localName == child) ? fn(e, options) : false;
+            } else {
+                 fn(e, options);
+            }           
+            return (typeof options.action !== 'undefined') ? options.action :  e.preventDefault();                
+        }, false);
+       
     }
 
-    function getActiveData(elements, value, compare) {
-        return _.map(elements, function(item) {                          
-                return (item.className == compare) ? item.getAttribute(value) : false;            
-            return item;
-        });
-    }
-    
     // Hammer touch event
     function touchEvent(type, el, fn) {
         var mc = new Hammer(el);        
-        mc.on(type, function(ev) {           
-            fn(ev);
+        return function(options) {
+            mc.on(type, function(ev) {           
+                fn(ev, options);
+            });
+        }
+    }
+
+    /* ---MANUPILATE DATA */
+
+    // Compare filter array with data type array
+    function filterObject(filter, type, data) {            
+        filter = _.filter(filter, function(item) {
+            return (item !== false) ? item : false;
+        });             
+        if (filter.length < 1) { return data }
+        return _.filter(data, function(item) {
+            var boo = false;
+            for(var i in filter) {                                
+                if(_.contains(item[type], filter[i])) {
+                    boo = true;
+                } else {
+                    boo = false;
+                    break;                    
+                }                                            
+            }
+            return (boo === true) ? item : false;            
+        });    
+    }
+
+    // Sort object desc or asc
+    function sortObject(data, orderby, order) {                  
+        return _.sortBy(data, function(item) {
+            if(order == 'desc') {
+                return (!isNaN(item[orderby])) ? -item.reviews : false;
+            } else {
+                return (!isNaN(item[orderby])) ? +item.reviews : false;
+            }
         });
     }
 
+
+    /* ---MANUPILATE MOVIE DATA */
+
     function filter(e, options) {     
-        toggleClass(e, {el: e.target, className: 'active'});
-        //console.log(getActiveData(getEl('.filter a', true)(get), 'data-value', 'active'));
-        //console.log(filterObject(getActiveData(getEl('.filter a', true)(get), 'data-value'), options.type, options.data));
+        toggleClass(e, {el: e.target, className: 'active'});       
         options.fn(
             options.template(
-                {movies: filterObject(getActiveData(getEl('.filter a', true)(get), 'data-value', 'active'), options.type, options.data)}
+                {movies: filterObject(compareAttribute(getEl('.filter a', true)(get), 'data-value', 'active'), options.type, options.data)}
             )
         );        
     }
 
-    function filterObject(filter, model, data) {       
-        return _.filter(data, function(item) {
-            
-            if(item.genres.length > 1) {
-                return (_.contains(
-                    _.map(item[model], function(val) { 
-                        return _.contains(filter, val) ? true : false;
-                    }), false)
-                ) ? false : item;
-            } else {
-                return (_.contains(filter, item.genre)) ? item : false;                 
-            }
-        });
+    // sort Movies by Rating
+    function sortMoviesByRate(e) {
+                 
+        toggleAttribute(e.target, 'data-order', 'desc'); 
 
-       /* return _.filter(data, function(item) {
-            (_.reduce(item[model], function(val) {
-                return _.contains(filter, val) ? true : false;
-            }) === true) ? item : false;
-                    
-            //return (exists(item[model]) && _.contains(item[model], filter)) ? item : false;
-        });*/
-       
+        setMovieHtml({
+            movies: sortObject(setMovies(getData(settings.url)).movies, 'reviews', getAttr(e.target, 'data-order'))
+        });       
     }
 
-    function sortObject(e, options) {          
-          options.fn(
-            options.template(
-                {movies: sortObjectMovies(options.data, options.type)}
-            )
-        );
-    }
-    function sortObjectMovies(data, order) {
-        return _.sortBy(data.movies, function(item) {
-            if(order == 'desc') {
-                return (!isNaN(item.reviews)) ? -item.reviews : false;
-            } else {
-                return (!isNaN(item.reviews)) ? +item.reviews : false;
-            }
-        });
-    }
-
+    // Set data for movies
     function setMovies(data) {            
          return {
             movies: _.map(data, function(movie, i) {            
@@ -204,11 +230,31 @@
             })            
         };
     }
+
+    // Get genres from all movies
     function setGenres(data) {
         return {
             genres: _.reduceRight(_.pluck(data, 'genres'), function(a, b) { return _.sortBy(_.union(a, b)); }, [])
         };
     }
+
+    /* ---PAGE HELPERS--- */
+    function setMovieHtml(obj) {
+         getEl('.main .movie_container')(printHtml)(
+            _.template(getEl('#movies')(getHtml))(obj)
+        );                
+    }
+    function setPageHtml(id, obj) {
+         getEl('.main')(printHtml)(
+            _.template(
+                getEl(id)(getHtml)            
+            )(obj)
+        );
+    }
+
+    /* ---PAGES--- */
+
+    // Movies page
     function movies(param) {       
         
         // set loader
@@ -218,13 +264,10 @@
 
         // set data                             
         setTimeout(function() {
-            getEl('.main')(printHtml)(
-                _.template(
-                    getEl('#movies')(getHtml)            
-                )(
-                    setMovies(getData(settings.url))
-                )
-            );
+           
+            setPageHtml('#moviesPage');
+            setMovieHtml(setMovies(getData(settings.url)));
+            
             // set genres
             getEl('.tools')(printHtml)(_.template(getEl('#genres')(getHtml))(setGenres(getData(settings.url))));
             setFilter();
@@ -232,80 +275,73 @@
         }, 400);
 
     }
+
+    // Movie Single page
     function movieSingle(param) {                
-        getEl('.main')(printHtml)(_.template(getEl('#singleMovie')(getHtml))(getData(settings.url+'/'+param.id)));        
+        setPageHtml('#singleMovie', getData(settings.url+'/'+param.id));
         //touch swipe back
-        touchEvent('swiperight', getEl('.main')(get), backToMovies);
+        touchEvent('swiperight', getEl('.main')(get), hashChange)('movies');
     }
 
-    // temporary hack to movies
-    function backToMovies() {         
-         hashChange('movies');
-    }
-    
-
+    // About page
     function about() {
-        getEl('.main')(printHtml)(_.template(getEl('#about')(getHtml))());
+        setPageHtml('#about');
     }
 
+    /* ---PAGE EVENTS--- */
+   
     function setNav() {
-        addEvent(
-            getEl('.btn_nav')(get), 
-            'click', 
-            'a', 
-            toggleClass, 
+        addEvent(getEl('.btn_nav')(get), 'click', 'a', toggleClass, 
             {
                 className: 'hide',
                 el: getEl('nav.global')(get)
             }   
-        );          
+        );
+         addEvent(getEl('nav.global')(get), 'click', 'a', toggleClass, 
+            {
+                className: 'hide',
+                el: getEl('nav.global')(get),
+                action: true
+            }   
+        );                    
     }
 
     function setFilter() {
-        addEvent(
-            getEl('.btn_filter')(get), 
-            'click', 
-            'a', 
-            toggleClass, 
+        addEvent(getEl('.btn_filter')(get), 'click', 'a', toggleClass, 
             {
                 className: 'hide',
                 el: getEl('.tools')(get)
             }   
         );
-        addEvent (
-            getEl('.filter')(get),
-            'click',                     
-            'a', 
-            filter,                     
+        addEvent (getEl('.filter')(get), 'click', 'a', filter,                     
             {
                 type: 'genres',
                 data: setMovies(getData(settings.url))['movies'],
-                fn:  getEl('.main')(printHtml),
+                fn:  getEl('.main .movie_container')(printHtml),
                 template: _.template(getEl('#movies')(getHtml))                            
             }
-        );          
-    }
+        );   
 
+        addEvent(getEl('.search')(get), 'keyup', null, search, {action: true});       
+    }
+    function search(e) {      
+        setMovieHtml({
+            movies: _.filter(setMovies(getData(settings.url))['movies'], function(item) {
+                return (item.title.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) ? item : false 
+            })
+        });     
+    }
+   
     function setOrder() {
-        addEvent (
-            getEl('.sort')(get),
-            'click',                     
-            'a', 
-            sortObject,                     
-            {
-                data: setMovies(getData(settings.url)),
-                type: 'desc',
-                fn:  getEl('.main')(printHtml),
-                template: _.template(getEl('#movies')(getHtml)) 
-            }
-        );        
+        addEvent (getEl('.sort')(get), 'click', 'a', sortMoviesByRate, {});        
     }
 
-    // Pages
+    /*  ---ROUTES--- */
+    // Use satnav library for routing (functional library)
     Satnav({
-        html5: false, // don't use pushState
-        force: true, // force change event on same route
-        poll: 100 // poll hash every 100ms if polyfilled
+        html5: false, 
+        force: true, 
+        poll: 100 
     })
     .navigate({
         path: '/',
